@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Slider
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +50,7 @@ fun TipCalculatorApp() {
     }
 }
 
-// НОВАЯ ФУНКЦИЯ: Расчет процента скидки в зависимости от количества блюд
+// Простая функция без @Composable
 fun getDiscountPercent(dishes: Int): Int = when (dishes) {
     in 1..2 -> 3
     in 3..5 -> 5
@@ -56,7 +58,6 @@ fun getDiscountPercent(dishes: Int): Int = when (dishes) {
     else -> if (dishes > 10) 10 else 0
 }
 
-// НОВЫЙ КОМПОНЕНТ: Радиокнопка с процентом
 @Composable
 fun DiscountRadioButton(percent: Int, selected: Boolean) {
     Row(
@@ -65,8 +66,8 @@ fun DiscountRadioButton(percent: Int, selected: Boolean) {
     ) {
         RadioButton(
             selected = selected,
-            onClick = null,  // null т.к. выбор программный
-            enabled = false  // отключено для пользователя
+            onClick = null,
+            enabled = false
         )
         Text(
             text = "$percent%",
@@ -81,7 +82,6 @@ fun TipScreen() {
     var dishesText by remember { mutableStateOf("") }
     var sliderValue by remember { mutableStateOf(0f) }
 
-    // НОВЫЙ КОД: Получаем количество блюд и рассчитываем скидку
     val dishes = dishesText.toIntOrNull() ?: 0
     val discountPercent = getDiscountPercent(dishes)
 
@@ -106,7 +106,14 @@ fun TipScreen() {
                 onValueChange = { sumText = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFFFE4E1),
+                    unfocusedContainerColor = Color(0xFFFFE4E1),
+                    focusedBorderColor = Color(0xFFFF69B4),
+                    unfocusedBorderColor = Color(0xFFFFB6C1),
+                    cursorColor = Color(0xFFFF69B4)
+                )
             )
         }
 
@@ -126,12 +133,20 @@ fun TipScreen() {
                 onValueChange = { dishesText = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFFFE4E1),
+                    unfocusedContainerColor = Color(0xFFFFE4E1),
+                    focusedBorderColor = Color(0xFFFF69B4),
+                    unfocusedBorderColor = Color(0xFFFFB6C1),
+                    cursorColor = Color(0xFFFF69B4)
+                )
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // Чаевые и слайдер
         Text(
             text = "Чаевые:",
             modifier = Modifier.padding(bottom = 8.dp)
@@ -155,7 +170,7 @@ fun TipScreen() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // НОВЫЙ КОД: Скидка и радиокнопки
+        // Скидка и радиокнопки
         Text(
             text = "Скидка:",
             modifier = Modifier.padding(bottom = 8.dp)
