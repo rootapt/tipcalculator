@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,8 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +51,8 @@ fun TipCalculatorApp() {
 fun TipScreen() {
     var sumText by remember { mutableStateOf("") }
     var dishesText by remember { mutableStateOf("") }
+    // Новая переменная для слайдера
+    var sliderValue by remember { mutableStateOf(0f) }
 
     Column(
         modifier = Modifier
@@ -96,5 +98,36 @@ fun TipScreen() {
                 shape = RoundedCornerShape(8.dp)
             )
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // НОВЫЙ КОД: Чаевые и слайдер
+        Text(
+            text = "Чаевые:",
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Подписи 0 и 25 над слайдером
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "0", style = MaterialTheme.typography.bodySmall)
+            Text(text = "25", style = MaterialTheme.typography.bodySmall)
+        }
+
+        // Слайдер
+        Slider(
+            value = sliderValue,
+            onValueChange = { sliderValue = it },
+            valueRange = 0f..25f,
+            steps = 24, // 24 шага между 0 и 25 для плавности
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Добавляем отступ после слайдера
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Здесь пока ничего нет, но в следующих коммитах добавим радиокнопки
     }
 }
