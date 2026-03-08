@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -47,12 +48,42 @@ fun TipCalculatorApp() {
     }
 }
 
+// НОВАЯ ФУНКЦИЯ: Расчет процента скидки в зависимости от количества блюд
+fun getDiscountPercent(dishes: Int): Int = when (dishes) {
+    in 1..2 -> 3
+    in 3..5 -> 5
+    in 6..10 -> 7
+    else -> if (dishes > 10) 10 else 0
+}
+
+// НОВЫЙ КОМПОНЕНТ: Радиокнопка с процентом
+@Composable
+fun DiscountRadioButton(percent: Int, selected: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(end = 8.dp)
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = null,  // null т.к. выбор программный
+            enabled = false  // отключено для пользователя
+        )
+        Text(
+            text = "$percent%",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
 @Composable
 fun TipScreen() {
     var sumText by remember { mutableStateOf("") }
     var dishesText by remember { mutableStateOf("") }
-    // Новая переменная для слайдера
     var sliderValue by remember { mutableStateOf(0f) }
+
+    // НОВЫЙ КОД: Получаем количество блюд и рассчитываем скидку
+    val dishes = dishesText.toIntOrNull() ?: 0
+    val discountPercent = getDiscountPercent(dishes)
 
     Column(
         modifier = Modifier
@@ -101,13 +132,11 @@ fun TipScreen() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // НОВЫЙ КОД: Чаевые и слайдер
         Text(
             text = "Чаевые:",
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Подписи 0 и 25 над слайдером
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -116,18 +145,30 @@ fun TipScreen() {
             Text(text = "25", style = MaterialTheme.typography.bodySmall)
         }
 
-        // Слайдер
         Slider(
             value = sliderValue,
             onValueChange = { sliderValue = it },
             valueRange = 0f..25f,
-            steps = 24, // 24 шага между 0 и 25 для плавности
+            steps = 24,
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Добавляем отступ после слайдера
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Здесь пока ничего нет, но в следующих коммитах добавим радиокнопки
+        // НОВЫЙ КОД: Скидка и радиокнопки
+        Text(
+            text = "Скидка:",
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            DiscountRadioButton(percent = 3, selected = discountPercent == 3)
+            DiscountRadioButton(percent = 5, selected = discountPercent == 5)
+            DiscountRadioButton(percent = 7, selected = discountPercent == 7)
+            DiscountRadioButton(percent = 10, selected = discountPercent == 10)
+        }
     }
 }
